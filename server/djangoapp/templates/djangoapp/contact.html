@@ -10,11 +10,23 @@
     <link href="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.css" rel="stylesheet">
     <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.js"></script>
     <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
-
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            font-family: 'Roboto', sans-serif;
+        }
+        .jumbotron {
+            background: #f8f9fa;
+            position: relative;
+        }
+    </style>
 </head>
     <body>
         <!--Add a nav bar here -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container">
                 <a class="navbar-brand" href="{% url 'djangoapp:index' %}">Best Cars Dealership</a>
                 <div class="collapse navbar-collapse" id="navbarNav">
@@ -32,18 +44,23 @@
             </div>
         </nav>
 
-        <!--Add a dealer table here -->
-        <section class="mt-4" style="height: 300px">
+        <section class="mt-4">
             <div class="container">
-                <h1>Contact Us</h1>
-                <dl>
-                    <dt>Address: </dt>
-                    <dd>Best Cars Address</dd>
-                    <dt>Phone Number: </dt>
-                    </dd>(000) 555</dd>  
-                </dl>  
+                <div class="jumbotron">
+                    <h1 class="display-4">                    
+                        Contact Us
+                    </h1>
+                    <dl>
+                        <dt>Address: </dt>
+                        <dd>Best Cars Address</dd>
+                        <dt>Phone Number: </dt>
+                        </dd>(000) 555</dd>  
+                    </dl>
+                    </div>
             </div>
         </section>
+
+        <!--Add a dealer table here -->
 
         <section id="footer">
             <div class="container">
