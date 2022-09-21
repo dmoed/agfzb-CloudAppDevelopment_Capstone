@@ -10,7 +10,7 @@
     <link href="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.css" rel="stylesheet">
     <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.js"></script>
     <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -21,6 +21,7 @@
         .jumbotron {
             background: #fff;
             position: relative;
+            padding: 0;
         }
 
         .jumbotron h1 {
@@ -77,11 +78,33 @@
         <section class="mt-5">
             <div class="container">
                 <div class="jumbotron">
-                    <h1 class="display-4">                    
+                    <h1 class="display-4">
                         Drive your dream car today
                     </h1>
                     <img class="d-block w-100" src="{{ MEDIA_URL }}car.jpg" alt="First slide">
                   </div>
+
+                {% if dealers_list %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h1 class="text-center py-4">
+                                Find a Dealer
+                            </h1>
+                        </div>
+                    </div>
+                    <div class="card-columns">
+                    {% for dealer in dealers_list %}
+                    <div class="card">
+                        <div class="card-body ">
+                            <h5 class="card-title">{{ dealer.city }} {{ dealer.state }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ dealer.zip }}</h6>
+                            <p class="card-text">{{ dealer.address }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </section>
 
@@ -96,13 +119,13 @@
                             <li><a href="{% url 'djangoapp:contact' %}">Contact Us</a></li>
                         </ul>
                     </div>
-                </div>	
+                </div>
                 <div class="row">
                     <div class="col-md-12">
                         <p class="h6">© All right Reversed.<a class="text-green ml-2" href="{% url 'djangoapp:index' %}" target="_blank">Best Cars Dealership</a></p>
                     </div>
                     <hr>
-                </div>	
+                </div>
             </div>
         </section>
     </body>
