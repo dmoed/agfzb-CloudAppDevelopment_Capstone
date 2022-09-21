@@ -32,101 +32,126 @@
             right: 0;
             text-align: center;
         }
+
+
     </style>
 </head>
-    <body>
-        <!--Add a nav bar here -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" href="{% url 'djangoapp:index' %}">Best Cars Dealership</a>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav flex-fill">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'djangoapp:about' %}">About Us</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'djangoapp:contact' %}">Contact Us</a>
-                        </li>
-                        <li class="nav-item">
-                        </li>
-                    </ul>
+<body>
+<!--Add a nav bar here -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'djangoapp:index' %}">Best Cars Dealership</a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav flex-fill">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'djangoapp:about' %}">About Us</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'djangoapp:contact' %}">Contact Us</a>
+                </li>
+                <li class="nav-item">
+                </li>
+            </ul>
 
-                    {% if user.is_authenticated %}
-                    <ul class="navbar-nav">
-                        <li>
-                            <span class="navbar-text">Welcome, <u>{{ user.username }}</u></a>
-                            <a class="btn btn-link" href="{% url 'djangoapp:logout' %}">Sign out</a>
-                        </li>
-                    </ul>
-                    {% else %}
-                    <form class="form-inline" action="{% url 'djangoapp:login' %}" method="post">
-                        {% csrf_token %}
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Username" name="username" />
-                            <input type="password" class="form-control" placeholder="Password" name="psw" />
-                            <button class="btn btn-outline-light ml-2" type="submit">Sign in</button>
-                            <a class="btn btn-outline-light ml-2" href="{% url 'djangoapp:registration' %}">Sign Up</a>
-                        </div>
-                    </form>
-                    {% endif %}
-
+            {% if user.is_authenticated %}
+            <ul class="navbar-nav">
+                <li>
+                    <span class="navbar-text">
+                        Welcome, <u>{{ user.username }}</u>
+                        <a class="btn btn-link" href="{% url 'djangoapp:logout' %}">Sign out</a>
+                    </span>
+                </li>
+            </ul>
+            {% else %}
+            <form class="form-inline" action="{% url 'djangoapp:login' %}" method="post">
+                {% csrf_token %}
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Username" name="username"/>
+                    <input type="password" class="form-control" placeholder="Password" name="psw"/>
+                    <button class="btn btn-outline-light ml-2" type="submit">Sign in</button>
+                    <a class="btn btn-outline-light ml-2" href="{% url 'djangoapp:registration' %}">Sign Up</a>
                 </div>
+            </form>
+            {% endif %}
+
+        </div>
+    </div>
+</nav>
+
+<!--Add a dealer table here -->
+<section class="mt-5">
+    <div class="container">
+        <div class="jumbotron">
+            <h1 class="display-4">
+                Drive your dream car today
+            </h1>
+            <img class="d-block w-100" src="{{ MEDIA_URL }}car.jpg" alt="First slide">
+        </div>
+
+        {% if dealers_list %}
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="text-center py-4">
+                    Find a Dealer
+                </h1>
             </div>
-        </nav>
+        </div>
 
-        <!--Add a dealer table here -->
-        <section class="mt-5">
-            <div class="container">
-                <div class="jumbotron">
-                    <h1 class="display-4">
-                        Drive your dream car today
-                    </h1>
-                    <img class="d-block w-100" src="{{ MEDIA_URL }}car.jpg" alt="First slide">
-                  </div>
+        <table class="table table-striped" id="table" data-filter-control="true">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Dealer Name</th>
+                <th>City</th>
+                <th>Address</th>
+                <th>Zip</th>
+                <th data-field="state" data-filter-control="select">State</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for dealer in dealers_list %}
+            <tr>
+                <td>{{ dealer.id }}</td>
+                <td><a href="{% url 'djangoapp:dealer_details' dealer.id %}">{{dealer.full_name}}</a></td>
+                <td>{{ dealer.city }}</td>
+                <td>{{ dealer.address }}</td>
+                <td>{{ dealer.zip }}</td>
+                <td>{{ dealer.state }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+</section>
 
-                {% if dealers_list %}
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h1 class="text-center py-4">
-                                Find a Dealer
-                            </h1>
-                        </div>
-                    </div>
-                    <div class="card-columns">
-                    {% for dealer in dealers_list %}
-                    <div class="card">
-                        <div class="card-body ">
-                            <h5 class="card-title">{{ dealer.city }} {{ dealer.state }}</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">{{ dealer.zip }}</h6>
-                            <p class="card-text">{{ dealer.address }}</p>
-                        </div>
-                    </div>
-                    {% endfor %}
-                    </div>
-                </div>
-                {% endif %}
+<section id="footer" class="mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>Menu</h5>
+                <ul class="list-unstyled quick-links">
+                    <li><a href="{% url 'djangoapp:index' %}">Home</a></li>
+                    <li><a href="{% url 'djangoapp:about' %}">About Us</a></li>
+                    <li><a href="{% url 'djangoapp:contact' %}">Contact Us</a></li>
+                </ul>
             </div>
-        </section>
-
-        <section id="footer" class="mt-4">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-4">
-                        <h5>Menu</h5>
-                        <ul class="list-unstyled quick-links">
-                            <li><a href="{% url 'djangoapp:index' %}">Home</a></li>
-                            <li><a href="{% url 'djangoapp:about' %}">About Us</a></li>
-                            <li><a href="{% url 'djangoapp:contact' %}">Contact Us</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <p class="h6">© All right Reversed.<a class="text-green ml-2" href="{% url 'djangoapp:index' %}" target="_blank">Best Cars Dealership</a></p>
-                    </div>
-                    <hr>
-                </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <p class="h6">© All right Reversed.<a class="text-green ml-2" href="{% url 'djangoapp:index' %}"
+                                                      target="_blank">Best Cars Dealership</a></p>
             </div>
-        </section>
-    </body>
+            <hr>
+        </div>
+    </div>
+</section>
+
+<script>
+  $(function() {
+    $('#table').bootstrapTable()
+  })
+</script>
+</body>
+
 </html>

@@ -32,88 +32,105 @@
             right: 0;
             text-align: center;
         }
+
     </style>
 </head>
-    <body>
-        <!--Add a nav bar here -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" href="{% url 'djangoapp:index' %}">Best Cars Dealership</a>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav flex-fill">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'djangoapp:about' %}">About Us</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'djangoapp:contact' %}">Contact Us</a>
-                        </li>
-                        <li class="nav-item">
-                        </li>
-                    </ul>
+<body>
+<!--Add a nav bar here -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'djangoapp:index' %}">Best Cars Dealership</a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav flex-fill">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'djangoapp:about' %}">About Us</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'djangoapp:contact' %}">Contact Us</a>
+                </li>
+                <li class="nav-item">
+                </li>
+            </ul>
 
-                    {% if user.is_authenticated %}
-                    <ul class="navbar-nav">
-                        <li>
-                            <span class="navbar-text">Welcome, <u>{{ user.username }}</u></a>
-                            <a class="btn btn-link" href="{% url 'djangoapp:logout' %}">Sign out</a>
-                        </li>
-                    </ul>
-                    {% else %}
-                    <form class="form-inline" action="{% url 'djangoapp:login' %}" method="post">
-                        {% csrf_token %}
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Username" name="username" />
-                            <input type="password" class="form-control" placeholder="Password" name="psw" />
-                            <button class="btn btn-outline-light ml-2" type="submit">Sign in</button>
-                            <a class="btn btn-outline-light ml-2" href="{% url 'djangoapp:registration' %}">Sign Up</a>
-                        </div>
-                    </form>
-                    {% endif %}
+            {% if user.is_authenticated %}
+            <ul class="navbar-nav">
+                <li>
+                    <span class="navbar-text mr-5">
+                        <a class="btn btn-link btn-outline-primary"
+                           href="{% url 'djangoapp:dealer_add_review' dealer_id %}">Add Review</a>
+                    </span>
+                </li>
+                <li>
+                    <span class="navbar-text">
+                        Welcome, <u>{{ user.username }}</u>
+                        <a class="btn btn-link" href="{% url 'djangoapp:logout' %}">Sign out</a>
+                    </span>
+                </li>
+            </ul>
+            {% else %}
+            <form class="form-inline" action="{% url 'djangoapp:login' %}" method="post">
+                {% csrf_token %}
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Username" name="username"/>
+                    <input type="password" class="form-control" placeholder="Password" name="psw"/>
+                    <button class="btn btn-outline-light ml-2" type="submit">Sign in</button>
+                    <a class="btn btn-outline-light ml-2" href="{% url 'djangoapp:registration' %}">Sign Up</a>
+                </div>
+            </form>
+            {% endif %}
 
+        </div>
+    </div>
+</nav>
+
+<!--Add a dealer table here -->
+<section class="mt-5">
+    <div class="container">
+        <h2>Reviews</h2>
+        {% if reviews_list %}
+        <div class="card-columns">
+            {% for review in reviews_list %}
+            <div class="card">
+                <div class="card-header text-center">
+                    <img class="w-50 p-2" src="{{ MEDIA_URL }}emoji/{{ review.sentiment }}.png" alt="Review">
+                </div>
+                <div class="card-body ">
+                    <h5 class="card-title">{{ review.car_make }}, {{ review.car_model }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ review.car_year }}</h6>
+                    <!--                            <p class="card-text"></p>-->
+
+                    <blockquote class="blockquote mb-0">
+                        <p>{{ review.review }}</p>
+                        <footer class="blockquote-footer">by <cite>{{ review.name }}</cite></footer>
+                    </blockquote>
                 </div>
             </div>
-        </nav>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</section>
 
-        <!--Add a dealer table here -->
-        <section class="mt-5">
-            <div class="container">
-                <h2>Reviews</h2>
-
-                {% if reviews_list %}
-                <div class="card-columns">
-                    {% for review in reviews_list %}
-                    <div class="card">
-                        <div class="card-body ">
-                            <h5 class="card-title">{{ review.name }}</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">{{ review.car_make }}</h6>
-                            <p class="card-text">{{ review.review }}</p>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                {% endif %}
+<section id="footer" class="mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>Menu</h5>
+                <ul class="list-unstyled quick-links">
+                    <li><a href="{% url 'djangoapp:index' %}">Home</a></li>
+                    <li><a href="{% url 'djangoapp:about' %}">About Us</a></li>
+                    <li><a href="{% url 'djangoapp:contact' %}">Contact Us</a></li>
+                </ul>
             </div>
-        </section>
-
-        <section id="footer" class="mt-4">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-4">
-                        <h5>Menu</h5>
-                        <ul class="list-unstyled quick-links">
-                            <li><a href="{% url 'djangoapp:index' %}">Home</a></li>
-                            <li><a href="{% url 'djangoapp:about' %}">About Us</a></li>
-                            <li><a href="{% url 'djangoapp:contact' %}">Contact Us</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <p class="h6">© All right Reversed.<a class="text-green ml-2" href="{% url 'djangoapp:index' %}" target="_blank">Best Cars Dealership</a></p>
-                    </div>
-                    <hr>
-                </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <p class="h6">© All right Reversed.<a class="text-green ml-2" href="{% url 'djangoapp:index' %}"
+                                                      target="_blank">Best Cars Dealership</a></p>
             </div>
-        </section>
-    </body>
+            <hr>
+        </div>
+    </div>
+</section>
+</body>
 </html>

@@ -41,12 +41,10 @@ def main(dict):
             if "review" in dict and len(dict["review"]):
 
                 newDocument = Document(
-                    id=str(dict["review"]["id"]),
                     name=dict["review"]["name"],
-                    dealership=dict["review"]["dealership"],
+                    dealership=int(dict["review"]["dealership"]),
                     review=dict["review"]["review"],
-                    purchase=dict["review"]["purchase"],
-                    another=dict["review"]["another"],
+                    purchase=bool(dict["review"]["purchase"]),
                     purchase_date=dict["review"]["purchase_date"],
                     car_make=dict["review"]["car_make"],
                     car_model=dict["review"]["car_model"],
@@ -81,5 +79,5 @@ def main(dict):
         return {
             "statusCode": 500,
             "headers": {"Content-Type": "application/json"},
-            "body": {"message": "Internal Server Error", "error": str(e)}
+            "body": {"message": "Internal Server Error", "error": e}
         }

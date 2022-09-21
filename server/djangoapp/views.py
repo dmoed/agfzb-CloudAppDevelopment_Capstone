@@ -1,13 +1,10 @@
-from django.shortcuts import render
-from django.http import HttpResponseRedirect, HttpResponse
+import logging
+import datetime
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
-# from .models import related models
-from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf, get_dealer_by_state_from_cf, post_request
 from django.contrib.auth import login, logout, authenticate
-import logging
-import json
-from django.core.exceptions import BadRequest
+from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf, get_dealer_by_state_from_cf, post_request
+from .models import CarMake, CarModel
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -118,44 +115,64 @@ def get_dealerships_by_state(request):
 # def get_dealer_details(request, dealer_id):
 # ...
 def get_dealer_details(request, dealer_id):
-    #context = {}
+    context = {}
     if request.method == "GET":
 
         url = "https://us-east.functions.appdomain.cloud/api/v1/web/apptastic-nv_djangoserver-space/api/review"
 
         reviews_list = get_dealer_reviews_from_cf(url, dealerId=dealer_id)
-        #context["reviews_list"] = reviews_list
+        context["reviews_list"] = reviews_list
+        context['dealer_id'] = dealer_id
 
-        return HttpResponse(reviews_list)
+        return render(request, "djangoapp/dealer_details.html", context)
 
 # Create a `add_review` view to submit a review
 # def add_review(request, dealer_id):
 def add_review(request, dealer_id):
 
+    # fetch cars
+    queryset = CarModel.objects.select_related('manufacturer')
+
+    context = {}
+    context['cars'] = queryset
+    context['dealer_id'] = dealer_id
+
     if request.method == "POST" and request.user.is_authenticated:
 
         url = "https://us-east.functions.appdomain.cloud/api/v1/web/apptastic-nv_djangoserver-space/api/review"
 
+        selected_car = queryset[int(request.POST["car"])-1]
+        purchased = request.POST.get("purchase", False)
+        purchased_date = request.POST.get("purchase_date", "")
+
+        if purchased == "on":
+            purchased = True
+
+        if purchased_date:
+            purchased_date = datetime.datetime.strptime(purchased_date, "%m/%d/%Y").strftime("%m/%d/%Y")
+
         json_payload = {
             "review": {
-                "id": request.POST.get("id", ""),
+                "dealership": dealer_id,
                 "name": request.POST.get("name", ""),
-                "dealership": request.POST.get("dealership", ""),
                 "review": request.POST.get("review", ""),
-                "purchase": request.POST.get("purchase", ""),
-                "purchase_date": request.POST.get("purchase_date", ""),
-                "another": request.POST.get("another", ""),
-                "car_make": request.POST.get("car_make", ""),
-                "car_model": request.POST.get("car_model", ""),
-                "car_year": request.POST.get("car_year", ""),
+                "purchase": purchased,
+                "purchase_date": purchased_date,
+                "car_make": selected_car.manufacturer.name,
+                "car_model": selected_car.name,
+                "car_year": selected_car.year.strftime("%Y"),
             }
         }
+
         response = post_request(url, json_payload, dealerId=dealer_id)
 
-        print(response)
-
-        return HttpResponse("success")
+        if response:
+            return redirect("djangoapp/add_review.html", context)
+        else:
+            context['error'] = 'Whoops, something went wrong!'
+            return render(request, "djangoapp/add_review.html", context)
 
     else:
 
-        return HttpResponse("Bad Request")
+        return render(request, "djangoapp/add_review.html", context)
+

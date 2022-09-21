@@ -42,7 +42,7 @@ function getData(cloudant) {
                 if (response.result.rows.length) {
                     //parse data
                     let result = response.result.rows.map(
-                        ({doc: {id, city, state, st, address, zip, lat, long}}) => {
+                        ({doc: {id, city, state, st, address, zip, lat, long, short_name, full_name}}) => {
                             return {
                                 id,
                                 city,
@@ -51,7 +51,9 @@ function getData(cloudant) {
                                 address,
                                 zip,
                                 lat,
-                                long
+                                long,
+                                short_name,
+                                full_name
                             }
                         })
 
@@ -105,7 +107,7 @@ function getDataByState(cloudant, state) {
         cloudant.postFind({
             db: DATABASE_DEALERSHIPS,
             selector: selector,
-            fields: ['id', 'city', 'state', 'st', 'address', 'zip', 'lat', 'long'],
+            fields: ['id', 'city', 'state', 'st', 'address', 'zip', 'lat', 'long', 'short_name,', 'full_name'],
             sort: [{'_id': 'asc'}]
         }).then(response => {
 
