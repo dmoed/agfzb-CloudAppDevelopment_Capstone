@@ -115,8 +115,7 @@
                             <option selected value="">--select car--</option>
                             {% for car in cars %}
                             <option value={{car.id}}>
-                                {{car.manufacturer.name}}-{{car.name}}-{{car.get_type_display}}-{{car.get_trim_display}}-{{
-                                car.year|date:"Y" }}
+                                {{car.manufacturer.name}}-{{car.name}}-{{car.get_type_display}}-{{car.get_trim_display}}-{{ car.year|date:"Y" }}
                             </option>
                             {% endfor %}
                         </select>
