@@ -121,6 +121,8 @@ def get_dealer_details(request, dealer_id):
         url = "https://us-east.functions.appdomain.cloud/api/v1/web/apptastic-nv_djangoserver-space/api/review"
 
         reviews_list = get_dealer_reviews_from_cf(url, dealerId=dealer_id)
+        reviews_list.reverse()
+
         context["reviews_list"] = reviews_list
         context['dealer_id'] = dealer_id
 
@@ -167,7 +169,7 @@ def add_review(request, dealer_id):
         response = post_request(url, json_payload, dealerId=dealer_id)
 
         if response:
-            return redirect("djangoapp/add_review.html", context)
+            return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
         else:
             context['error'] = 'Whoops, something went wrong!'
             return render(request, "djangoapp/add_review.html", context)

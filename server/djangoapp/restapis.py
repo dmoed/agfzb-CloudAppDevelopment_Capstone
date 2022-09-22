@@ -11,8 +11,8 @@ import datetime
 # e.g., response = requests.get(url, params=params, headers={"Content-Type": "application/json"},
 #                                     auth=HTTPBasicAuth("apikey", api_key))
 def get_request(url, **kwargs):
-    print("GET from {} ".format(url))
-    print(kwargs)
+    #print("GET from {} ".format(url))
+    #print(kwargs)
     try:
         # Call get method of requests library with URL and parameters
         # no authentication GET
@@ -21,27 +21,32 @@ def get_request(url, **kwargs):
                                 params=kwargs)
 
         status_code = response.status_code
-        print("With status {} ".format(status_code))
-        json_data = json.loads(response.text)
-        return json_data
 
-    except:
+        #print("With status {} ".format(status_code))
+
+        if status_code == 200:
+            json_data = json.loads(response.text)
+            return json_data
+        else:
+            return False
+
+    except Exception as e:
         # If any error occurs
         print("Network exception occurred")
-
+        print(e)
 
 # Create a `post_request` to make HTTP POST requests
 # e.g., response = requests.post(url, params=kwargs, json=payload)
 def post_request(url, payload, **kwargs):
-    print("POST from {} ".format(url))
-    print(kwargs)
+    #print("POST from {} ".format(url))
+    #print(kwargs)
     try:
         # Call get method of requests library with URL and parameters
         # no authentication GET
         response = response = requests.post(url, params=kwargs, json=payload)
 
         status_code = response.status_code
-        print("With status {} ".format(status_code))
+        #print("With status {} ".format(status_code))
         # json_data = json.loads(response.text)
 
         if status_code == 201:
@@ -64,7 +69,7 @@ def get_dealers_from_cf(url, **kwargs):
     # Call get_request with a URL parameter
     json_result = get_request(url)
     if json_result:
-        print(json_result)
+        #print(json_result)
         # # Get the row list in JSON as dealers
         # # For each dealer object
         for dealer in json_result:
@@ -91,7 +96,7 @@ def get_dealer_by_state_from_cf(url, state):
     # Call get_request with a URL parameter
     json_result = get_request(url, state=state)
     if json_result:
-        print(json_result)
+        #print(json_result)
         # # Get the row list in JSON as dealers
         # # For each dealer object
         for dealer in json_result:
@@ -114,12 +119,12 @@ def get_dealer_reviews_from_cf(url, dealerId):
     results = []
     # Call get_request with a URL parameter
     json_result = get_request(url, dealerId=dealerId)
-    if json_result:
+    if json_result and len(json_result):
         # # Get the row list in JSON as dealers
         # # For each dealer object
         for review in json_result:
             #
-            sentiment = analyze_review_sentiments(review["review"])
+            sentiment = analyze_review_sentiments(str(review["review"]))
 
             # Get its content in `doc` object
             # Create a CarDealer object with values in `doc` object
@@ -167,8 +172,6 @@ def analyze_review_sentiments(review):
         )
     ).get_result()
 
-    # print(response)
-    # label = json.dumps(response, indent=2)
     label = response["sentiment"]["document"]["label"]
 
     return label
